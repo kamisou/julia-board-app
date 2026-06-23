@@ -58,24 +58,25 @@ class _BoardWidgetState extends State<BoardWidget> {
               }
               _emitStroke(context);
             },
-            child: CustomPaint(
-              foregroundPainter: _BoardPainter(
-                strokes: [...state.strokes, ?_composing],
-              ),
-              child: Container(
-                decoration: ShapeDecoration(
-                  color: theme.colorScheme.surfaceContainer,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: ShapeDecoration(
+                color: theme.colorScheme.surfaceContainer,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
                   ),
-                  shadows: [
-                    BoxShadow(
-                      blurRadius: 12,
-                      color: theme.colorScheme.shadow.withAlpha(32),
-                    ),
-                  ],
+                ),
+                shadows: [
+                  BoxShadow(
+                    blurRadius: 12,
+                    color: theme.colorScheme.shadow.withAlpha(32),
+                  ),
+                ],
+              ),
+              child: CustomPaint(
+                painter: _BoardPainter(
+                  strokes: [...state.strokes, ?_composing],
                 ),
               ),
             ),

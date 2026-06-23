@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
+import 'package:julia_board/board/presentation/data/board_constants.dart';
 
 class BoardPalette extends StatelessWidget {
   const BoardPalette({super.key});
@@ -12,7 +13,7 @@ class BoardPalette extends StatelessWidget {
         spacing: 4,
         runSpacing: 4,
         children: [
-          for (final color in BoardColors.colors)
+          for (final color in BoardConstants.colors)
             _colorCircle(context, state, color),
         ],
       ),
