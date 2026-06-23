@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
+import 'package:julia_board/board/presentation/widgets/board_controls.dart';
 import 'package:julia_board/board/presentation/widgets/board_palette.dart';
 import 'package:julia_board/board/presentation/widgets/board_widget.dart';
 
@@ -21,6 +22,8 @@ class BoardScreen extends StatelessWidget {
                 BoardWidget(),
                 SizedBox(height: 32),
                 BoardPalette(),
+                SizedBox(height: 16),
+                IntrinsicHeight(child: BoardControls()),
               ],
             ),
           ),

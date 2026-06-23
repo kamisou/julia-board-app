@@ -73,7 +73,7 @@ class _BoardWidgetState extends State<BoardWidget> {
                   shadows: [
                     BoxShadow(
                       blurRadius: 12,
-                      color: theme.colorScheme.shadow.withAlpha(12),
+                      color: theme.colorScheme.shadow.withAlpha(32),
                     ),
                   ],
                 ),

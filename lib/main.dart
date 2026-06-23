@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:julia_board/board/presentation/screen/board_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
   runApp(const MainApp());
 }
 
@@ -13,12 +16,13 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const BoardScreen(),
-      theme: ThemeData.light(useMaterial3: true).copyWith(
-        scaffoldBackgroundColor: const Color(0xFFFAFAFC),
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
         colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.dark,
           seedColor: const Color(0xFFB884CC),
-          surfaceContainer: const Color(0xFFFFFFFF),
         ),
+        textTheme: GoogleFonts.outfitTextTheme(),
       ),
     );
   }

@@ -39,7 +39,7 @@ class BoardPalette extends StatelessWidget {
                 BoxShadow(
                   blurRadius: 8,
                   offset: const Offset(2, 2),
-                  color: theme.colorScheme.shadow.withAlpha(24),
+                  color: theme.colorScheme.shadow.withAlpha(64),
                 ),
               ],
               color: color,

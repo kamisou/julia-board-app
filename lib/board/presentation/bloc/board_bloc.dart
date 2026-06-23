@@ -11,6 +11,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<ColorChanged>(_onColorChanged);
     on<WidthChanged>(_onWidthChanged);
     on<StrokeAdded>(_onStrokeAdded);
+    on<UndoTapped>(_onUndoTapped);
+    on<BoardCleared>(_onBoardCleared);
   }
 
   void _onColorChanged(
@@ -32,5 +34,25 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     emit(state.copyWith(strokes: [...state.strokes, event.stroke]));
+  }
+
+  void _onUndoTapped(
+    UndoTapped event,
+    Emitter<BoardState> emit,
+  ) async {
+    if (state.strokes.isEmpty) return;
+    emit(
+      state.copyWith(
+        strokes: [...state.strokes.take(state.strokes.length - 1)],
+      ),
+    );
+  }
+
+  void _onBoardCleared(
+    BoardCleared event,
+    Emitter<BoardState> emit,
+  ) async {
+    if (state.strokes.isEmpty) return;
+    emit(state.copyWith(strokes: const []));
   }
 }

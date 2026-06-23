@@ -39,3 +39,11 @@ final class StrokeAdded extends BoardEvent {
   @override
   List<Object> get props => [stroke];
 }
+
+final class UndoTapped extends BoardEvent {
+  const UndoTapped();
+}
+
+final class BoardCleared extends BoardEvent {
+  const BoardCleared();
+}
