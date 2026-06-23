@@ -30,5 +30,5 @@ final class BoardState extends Equatable {
   }
 
   @override
-  List<Object> get props => [color, width, ...strokes, status];
+  List<Object> get props => [color, width, strokes, status];
 }
