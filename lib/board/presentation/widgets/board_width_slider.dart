@@ -9,6 +9,7 @@ class BoardWidthSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BoardBloc, BoardState>(
+      buildWhen: (previous, current) => previous.width != current.width,
       builder: (context, state) => RotatedBox(
         quarterTurns: 3,
         child: Slider(

@@ -9,6 +9,7 @@ class BoardPalette extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BoardBloc, BoardState>(
+      buildWhen: (previous, current) => previous.color != current.color,
       builder: (context, state) => Wrap(
         spacing: 4,
         runSpacing: 4,

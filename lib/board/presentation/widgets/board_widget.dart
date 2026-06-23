@@ -30,34 +30,38 @@ class _BoardWidgetState extends State<BoardWidget> {
       child: BlocBuilder<BoardBloc, BoardState>(
         builder: (context, state) => LayoutBuilder(
           builder: (context, constraints) => GestureDetector(
-            onPanStart: (details) {
-              final pos = details.localPosition;
-              _startComposing(pos, state);
-            },
-            onPanUpdate: (details) {
-              final pos = details.localPosition;
-              final oob =
-                  pos.dx < 0 ||
-                  pos.dy < 0 ||
-                  pos.dx >= constraints.maxWidth ||
-                  pos.dy >= constraints.maxHeight;
-              if (oob) {
-                _emitStroke(context);
-                return;
-              }
-              if (_composing == null) _startComposing(pos, state);
-              final far =
-                  _composing!.points.length == 1 ||
-                  (pos - _composing!.points.last).distanceSquared > 5;
-              if (far) setState(() => _composing!.points.add(pos));
-            },
-            onPanEnd: (details) {
-              final pos = details.localPosition;
-              if (_composing != null) {
-                setState(() => _composing!.points.add(pos));
-              }
-              _emitStroke(context);
-            },
+            onPanStart: state.status != BoardStatus.loading
+                ? (details) {
+                    final pos = details.localPosition;
+                    _startComposing(pos, state);
+                  }
+                : null,
+            onPanUpdate: state.status != BoardStatus.loading
+                ? (details) {
+                    final pos = details.localPosition;
+                    final oob =
+                        pos.dx < 0 ||
+                        pos.dy < 0 ||
+                        pos.dx >= constraints.maxWidth ||
+                        pos.dy >= constraints.maxHeight;
+                    if (oob) {
+                      _emitStroke(context);
+                      return;
+                    }
+                    if (_composing == null) _startComposing(pos, state);
+                    final far =
+                        _composing!.points.length == 1 ||
+                        (pos - _composing!.points.last).distanceSquared > 15;
+                    if (far) setState(() => _composing!.points.add(pos));
+                  }
+                : null,
+            onPanEnd: state.status != BoardStatus.loading
+                ? (details) {
+                    final pos = details.localPosition;
+                    if (_composing != null) _composing!.points.add(pos);
+                    _emitStroke(context);
+                  }
+                : null,
             child: Container(
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
@@ -76,7 +80,8 @@ class _BoardWidgetState extends State<BoardWidget> {
               ),
               child: CustomPaint(
                 painter: _BoardPainter(
-                  strokes: [...state.strokes, ?_composing],
+                  composing: _composing,
+                  strokes: state.strokes,
                 ),
               ),
             ),
@@ -106,31 +111,31 @@ class _BoardWidgetState extends State<BoardWidget> {
 class _BoardPainter extends CustomPainter {
   const _BoardPainter({
     required this.strokes,
+    this.composing,
   });
 
   final List<BoardStroke> strokes;
+  final BoardStroke? composing;
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (final stroke in strokes) {
+    for (final stroke in [...strokes, ?composing]) {
       final paint = Paint()
         ..color = stroke.color
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round
         ..strokeWidth = stroke.width;
-      if (stroke.points.length == 1) {
-        canvas.drawPoints(PointMode.points, stroke.points, paint);
-      } else {
-        final segments = IterableZip([stroke.points, stroke.points.skip(1)]);
-        for (final segment in segments) {
-          canvas.drawLine(segment.first, segment.last, paint);
-        }
-      }
+      canvas.drawPoints(
+        stroke.points.length == 1 ? PointMode.points : PointMode.polygon,
+        stroke.points,
+        paint,
+      );
     }
   }
 
   @override
   bool shouldRepaint(covariant _BoardPainter oldDelegate) {
-    return listEquals(strokes, oldDelegate.strokes);
+    return composing != oldDelegate.composing ||
+        strokes.length == oldDelegate.strokes.length;
   }
 }
