@@ -10,14 +10,12 @@ class BoardControls extends StatelessWidget {
     final theme = Theme.of(context);
     return BlocBuilder<BoardBloc, BoardState>(
       buildWhen: (previous, current) =>
-          previous.strokes.length != current.strokes.length ||
-          previous.status != current.status,
+          previous.artifacts.length != current.artifacts.length,
       builder: (context, state) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            onPressed:
-                state.strokes.isNotEmpty && state.status != BoardStatus.loading
+            onPressed: state.artifacts.isNotEmpty
                 ? () => context.read<BoardBloc>().add(const UndoTapped())
                 : null,
             icon: const Icon(
@@ -30,8 +28,7 @@ class BoardControls extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           IconButton.filled(
-            onPressed:
-                state.strokes.isNotEmpty && state.status != BoardStatus.loading
+            onPressed: state.artifacts.isNotEmpty
                 ? () => context.read<BoardBloc>().add(const BoardCleared())
                 : null,
             icon: const Icon(
@@ -39,25 +36,6 @@ class BoardControls extends StatelessWidget {
               size: 28,
             ),
           ),
-          const VerticalDivider(
-            indent: 8,
-            endIndent: 8,
-            width: 64,
-          ),
-          const SizedBox(width: 4),
-          if (state.status != BoardStatus.loading)
-            TextButton.icon(
-              onPressed: () => context.read<BoardBloc>().add(const BoardSent()),
-              icon: const Icon(Icons.send_rounded),
-              label: const Text('Enviar'),
-              style: TextButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                textStyle: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
         ],
       ),
     );

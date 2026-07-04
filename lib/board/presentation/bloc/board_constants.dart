@@ -1,4 +1,4 @@
-import 'dart:ui' show Color;
+part of 'board_bloc.dart';
 
 final class BoardConstants {
   static const minWidth = 1.0;

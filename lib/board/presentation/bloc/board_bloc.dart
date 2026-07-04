@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:julia_board/board/data/repository/board_repository.dart';
-import 'package:julia_board/board/presentation/data/board_constants.dart';
-import 'package:julia_board/board/presentation/data/board_stroke.dart';
+import 'package:julia_board/board/presentation/data/board_artifact.dart';
+import 'package:julia_board/board/domain/repository/board_repository_interface.dart';
 
 part 'board_event.dart';
 part 'board_state.dart';
+part 'board_constants.dart';
 
 class BoardBloc extends Bloc<BoardEvent, BoardState> {
   BoardBloc({
@@ -14,10 +14,9 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   }) : super(BoardState(color: BoardConstants.colors.first)) {
     on<ColorChanged>(_onColorChanged);
     on<WidthChanged>(_onWidthChanged);
-    on<StrokeAdded>(_onStrokeAdded);
+    on<ArtifactAdded>(_onArtifactAdded);
     on<UndoTapped>(_onUndoTapped);
     on<BoardCleared>(_onBoardCleared);
-    on<BoardSent>(_onBoardSent);
   }
 
   final BoardRepository boardRepository;
@@ -36,21 +35,21 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(state.copyWith(width: event.width));
   }
 
-  void _onStrokeAdded(
-    StrokeAdded event,
+  void _onArtifactAdded(
+    ArtifactAdded event,
     Emitter<BoardState> emit,
   ) async {
-    emit(state.copyWith(strokes: [...state.strokes, event.stroke]));
+    emit(state.copyWith(artifacts: [...state.artifacts, event.artifact]));
   }
 
   void _onUndoTapped(
     UndoTapped event,
     Emitter<BoardState> emit,
   ) async {
-    if (state.strokes.isEmpty) return;
+    if (state.artifacts.isEmpty) return;
     emit(
       state.copyWith(
-        strokes: [...state.strokes.take(state.strokes.length - 1)],
+        artifacts: [...state.artifacts.take(state.artifacts.length - 1)],
       ),
     );
   }
@@ -59,20 +58,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     BoardCleared event,
     Emitter<BoardState> emit,
   ) async {
-    if (state.strokes.isEmpty) return;
-    emit(state.copyWith(strokes: const []));
-  }
-
-  Future<void> _onBoardSent(
-    BoardSent event,
-    Emitter<BoardState> emit,
-  ) async {
-    emit(state.copyWith(status: BoardStatus.loading));
-    try {
-      await boardRepository.sendBoard(state.strokes);
-      emit(state.copyWith(strokes: const [], status: BoardStatus.success));
-    } catch (_) {
-      emit(state.copyWith(status: BoardStatus.error));
-    }
+    if (state.artifacts.isEmpty) return;
+    emit(state.copyWith(artifacts: const []));
   }
 }

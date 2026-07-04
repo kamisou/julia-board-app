@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
-import 'package:julia_board/board/presentation/data/board_constants.dart';
 
 class BoardPalette extends StatelessWidget {
   const BoardPalette({super.key});

@@ -1,12 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:julia_board/board/presentation/data/board_artifact.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
 import 'package:julia_board/board/presentation/data/board_stroke.dart';
+import 'package:uuid/uuid.dart';
 
 class BoardWidget extends StatefulWidget {
   const BoardWidget({
@@ -33,44 +33,35 @@ class _BoardWidgetState extends State<BoardWidget> {
           builder: (context, constraints) {
             final max = constraints.maxWidth;
             return GestureDetector(
-              onPanStart: state.status != BoardStatus.loading
-                  ? (details) {
-                      final pos = details.localPosition.scale(
-                        1.0 / max,
-                        1.0 / max,
-                      );
-                      _startComposing(pos, state);
-                    }
-                  : null,
-              onPanUpdate: state.status != BoardStatus.loading
-                  ? (details) {
-                      final pos = details.localPosition.scale(
-                        1.0 / max,
-                        1.0 / max,
-                      );
-                      final oob =
-                          pos.dx < 0 ||
-                          pos.dy < 0 ||
-                          pos.dx >= 1.0 ||
-                          pos.dy >= 1.0;
-                      if (oob) {
-                        _emitStroke(context);
-                        return;
-                      }
-                      if (_composing == null) _startComposing(pos, state);
-                      setState(() => _composing!.points.add(pos));
-                    }
-                  : null,
-              onPanEnd: state.status != BoardStatus.loading
-                  ? (details) {
-                      final pos = details.localPosition.scale(
-                        1.0 / max,
-                        1.0 / max,
-                      );
-                      if (_composing != null) _composing!.points.add(pos);
-                      _emitStroke(context);
-                    }
-                  : null,
+              onPanStart: (details) {
+                final pos = details.localPosition.scale(
+                  1.0 / max,
+                  1.0 / max,
+                );
+                _startComposing(pos, state);
+              },
+              onPanUpdate: (details) {
+                final pos = details.localPosition.scale(
+                  1.0 / max,
+                  1.0 / max,
+                );
+                final oob =
+                    pos.dx < 0 || pos.dy < 0 || pos.dx >= 1.0 || pos.dy >= 1.0;
+                if (oob) {
+                  _emitStroke(context);
+                  return;
+                }
+                if (_composing == null) _startComposing(pos, state);
+                setState(() => _composing!.points.add(pos));
+              },
+              onPanEnd: (details) {
+                final pos = details.localPosition.scale(
+                  1.0 / max,
+                  1.0 / max,
+                );
+                if (_composing != null) _composing!.points.add(pos);
+                _emitStroke(context);
+              },
               child: Container(
                 clipBehavior: Clip.antiAlias,
                 decoration: ShapeDecoration(
@@ -90,7 +81,7 @@ class _BoardWidgetState extends State<BoardWidget> {
                 child: CustomPaint(
                   painter: _BoardPainter(
                     composing: _composing,
-                    strokes: state.strokes,
+                    artifacts: state.artifacts,
                   ),
                 ),
               ),
@@ -104,6 +95,7 @@ class _BoardWidgetState extends State<BoardWidget> {
   void _startComposing(Offset pos, BoardState state) {
     setState(() {
       _composing = BoardStroke(
+        id: const Uuid().v4(),
         points: [pos],
         color: state.color,
         width: state.width,
@@ -114,8 +106,8 @@ class _BoardWidgetState extends State<BoardWidget> {
   void _emitStroke(BuildContext context) {
     if (_composing == null) return;
     context.read<BoardBloc>().add(
-      StrokeAdded(
-        stroke: _composing!.copyWith(
+      ArtifactAdded(
+        artifact: _composing!.copyWith(
           points: _douglasPecker(_composing!.points),
         ),
       ),
@@ -163,33 +155,36 @@ class _BoardWidgetState extends State<BoardWidget> {
 
 class _BoardPainter extends CustomPainter {
   const _BoardPainter({
-    required this.strokes,
+    required this.artifacts,
     this.composing,
   });
 
-  final List<BoardStroke> strokes;
-  final BoardStroke? composing;
+  final List<BoardArtifact> artifacts;
+  final BoardArtifact? composing;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.scale(size.width);
-    for (final stroke in [...strokes, ?composing]) {
-      final paint = Paint()
-        ..color = stroke.color
-        ..strokeJoin = StrokeJoin.round
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = stroke.width / size.width;
-      canvas.drawPoints(
-        stroke.points.length == 1 ? PointMode.points : PointMode.polygon,
-        stroke.points,
-        paint,
-      );
+    for (final artifact in [...artifacts, ?composing]) {
+      switch (artifact) {
+        case BoardStroke(:final color, :final width, :final points):
+          final paint = Paint()
+            ..color = color
+            ..strokeJoin = StrokeJoin.round
+            ..strokeCap = StrokeCap.round
+            ..strokeWidth = width / size.width;
+          canvas.drawPoints(
+            points.length == 1 ? PointMode.points : PointMode.polygon,
+            points,
+            paint,
+          );
+      }
     }
   }
 
   @override
   bool shouldRepaint(covariant _BoardPainter oldDelegate) {
     return composing != oldDelegate.composing ||
-        strokes.length == oldDelegate.strokes.length;
+        artifacts.length == oldDelegate.artifacts.length;
   }
 }

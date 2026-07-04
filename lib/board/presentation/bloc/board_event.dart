@@ -29,15 +29,15 @@ final class WidthChanged extends BoardEvent {
   List<Object> get props => [width];
 }
 
-final class StrokeAdded extends BoardEvent {
-  const StrokeAdded({
-    required this.stroke,
+final class ArtifactAdded extends BoardEvent {
+  const ArtifactAdded({
+    required this.artifact,
   });
 
-  final BoardStroke stroke;
+  final BoardArtifact artifact;
 
   @override
-  List<Object> get props => [stroke];
+  List<Object> get props => [artifact];
 }
 
 final class UndoTapped extends BoardEvent {
@@ -46,8 +46,4 @@ final class UndoTapped extends BoardEvent {
 
 final class BoardCleared extends BoardEvent {
   const BoardCleared();
-}
-
-final class BoardSent extends BoardEvent {
-  const BoardSent();
 }

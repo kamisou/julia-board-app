@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:julia_board/board/presentation/screen/board_screen.dart';
+import 'package:julia_board/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initializeDependencies();
   await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
   runApp(const MainApp());
 }
