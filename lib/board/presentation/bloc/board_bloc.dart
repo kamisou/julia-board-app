@@ -16,6 +16,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<WidthChanged>(_onWidthChanged);
     on<ArtifactAdded>(_onArtifactAdded);
     on<UndoTapped>(_onUndoTapped);
+    on<RedoTapped>(_onRedoTapped);
     on<BoardCleared>(_onBoardCleared);
   }
 
@@ -39,7 +40,12 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     ArtifactAdded event,
     Emitter<BoardState> emit,
   ) async {
-    emit(state.copyWith(artifacts: [...state.artifacts, event.artifact]));
+    emit(
+      state.copyWith(
+        artifacts: [...state.artifacts, event.artifact],
+        undoBuffer: const [],
+      ),
+    );
   }
 
   void _onUndoTapped(
@@ -50,6 +56,20 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(
       state.copyWith(
         artifacts: [...state.artifacts.take(state.artifacts.length - 1)],
+        undoBuffer: [...state.undoBuffer, state.artifacts.last],
+      ),
+    );
+  }
+
+  void _onRedoTapped(
+    RedoTapped event,
+    Emitter<BoardState> emit,
+  ) async {
+    if (state.undoBuffer.isEmpty) return;
+    emit(
+      state.copyWith(
+        artifacts: [...state.artifacts, state.undoBuffer.last],
+        undoBuffer: [...state.undoBuffer.take(state.undoBuffer.length - 1)],
       ),
     );
   }
@@ -59,6 +79,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     if (state.artifacts.isEmpty) return;
-    emit(state.copyWith(artifacts: const []));
+    emit(state.copyWith(artifacts: const [], undoBuffer: const []));
   }
 }

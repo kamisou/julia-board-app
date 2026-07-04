@@ -27,5 +27,5 @@ final class BoardStroke extends BoardArtifact {
   );
 
   @override
-  List<Object?> get props => [id, color, width, ...points];
+  List<Object?> get props => [id, color, width, points];
 }

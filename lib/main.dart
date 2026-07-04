@@ -5,7 +5,7 @@ import 'package:julia_board/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  initializeDependencies();
+  await initializeDependencies();
   await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
   runApp(const MainApp());
 }

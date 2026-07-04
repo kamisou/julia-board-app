@@ -44,6 +44,10 @@ final class UndoTapped extends BoardEvent {
   const UndoTapped();
 }
 
+final class RedoTapped extends BoardEvent {
+  const RedoTapped();
+}
+
 final class BoardCleared extends BoardEvent {
   const BoardCleared();
 }

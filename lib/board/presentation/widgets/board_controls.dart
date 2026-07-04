@@ -10,7 +10,8 @@ class BoardControls extends StatelessWidget {
     final theme = Theme.of(context);
     return BlocBuilder<BoardBloc, BoardState>(
       buildWhen: (previous, current) =>
-          previous.artifacts.length != current.artifacts.length,
+          previous.artifacts.length != current.artifacts.length ||
+          previous.undoBuffer.length != current.undoBuffer.length,
       builder: (context, state) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -20,6 +21,18 @@ class BoardControls extends StatelessWidget {
                 : null,
             icon: const Icon(
               Icons.undo_rounded,
+              size: 32,
+            ),
+            style: IconButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+            ),
+          ),
+          IconButton(
+            onPressed: state.undoBuffer.isNotEmpty
+                ? () => context.read<BoardBloc>().add(const RedoTapped())
+                : null,
+            icon: const Icon(
+              Icons.redo_rounded,
               size: 32,
             ),
             style: IconButton.styleFrom(
