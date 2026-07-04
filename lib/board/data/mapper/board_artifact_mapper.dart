@@ -11,7 +11,6 @@ final class BoardArtifactMapper {
         color: Color(map['color'] as int),
         width: (map['width'] as num).toDouble(),
         points: (map['points'] as List)
-            .cast<Map<String, Object?>>()
             .map(
               (e) => Offset(
                 (e['x'] as num).toDouble(),
@@ -32,7 +31,7 @@ final class BoardArtifactMapper {
       :final points,
     )) ...{
       'type': 'stroke',
-      'color': color,
+      'color': color.toARGB32(),
       'width': width,
       'points': points.map((e) => {'x': e.dx, 'y': e.dy}).toList(),
     },

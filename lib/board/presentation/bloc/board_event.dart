@@ -7,6 +7,10 @@ sealed class BoardEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class BoardStarted extends BoardEvent {
+  const BoardStarted();
+}
+
 final class ColorChanged extends BoardEvent {
   const ColorChanged({
     required this.color,

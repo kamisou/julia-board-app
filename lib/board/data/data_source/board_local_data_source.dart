@@ -3,7 +3,7 @@ import 'package:hive_ce/hive_ce.dart';
 final class BoardLocalDataSource {
   const BoardLocalDataSource();
 
-  Future<Box<Map<String, Object?>>> get _box async {
+  Future<Box<Map>> get _box async {
     if (Hive.isBoxOpen('board')) {
       return Hive.box('board');
     }
@@ -11,7 +11,9 @@ final class BoardLocalDataSource {
   }
 
   Future<List<Map<String, Object?>>> get() {
-    return _box.then((e) => e.values.toList());
+    return _box.then(
+      (e) => e.values.map((e) => e.cast<String, Object?>()).toList(),
+    );
   }
 
   Future<void> add(String id, Map<String, Object?> data) {

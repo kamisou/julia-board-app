@@ -9,10 +9,10 @@ final class ApiClient {
 
   final Dio _dio;
 
-  Future<T> get<T>(String path, {Map<String, dynamic>? query}) {
+  Future<T?> get<T>(String path, {Map<String, dynamic>? query}) {
     return _dio
         .get<T>(path, queryParameters: query)
-        .then((response) => response.data!);
+        .then((response) => response.data);
   }
 
   Future<T?> put<T>(String path, {Object? data}) {

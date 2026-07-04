@@ -4,48 +4,57 @@ import 'package:julia_board/board/data/data_source/board_local_data_source.dart'
 import 'package:julia_board/board/data/data_source/board_remote_data_source.dart';
 import 'package:julia_board/board/data/mapper/board_artifact_mapper.dart';
 import 'package:julia_board/board/presentation/data/board_artifact.dart';
-import 'package:julia_board/board/domain/repository/board_repository_interface.dart';
+import 'package:julia_board/core/device/device_id.dart';
 import 'package:julia_board/core/network/network_info.dart';
 
-final class BoardRepositoryImpl implements BoardRepository {
-  const BoardRepositoryImpl({
+final class BoardRepository {
+  BoardRepository({
     required this.networkInfo,
+    required this.deviceInfo,
     required this.localDataSource,
     required this.remoteDataSource,
   });
 
+  final DeviceInfo deviceInfo;
   final NetworkInfo networkInfo;
   final BoardLocalDataSource localDataSource;
   final BoardRemoteDataSource remoteDataSource;
+  String? boardId;
 
-  @override
-  Future<void> add(String boardId, BoardArtifact artifact) async {
+  Future<String> getBoardId() async {
+    final uniqueId = await deviceInfo.getUniqueId();
+    final id = await remoteDataSource.getBoardId(uniqueId);
+    boardId = id;
+    return id;
+  }
+
+  Future<void> add(BoardArtifact artifact) async {
     final map = BoardArtifactMapper.toMap(artifact);
     await localDataSource.add(artifact.id, map);
-    if (!networkInfo.hasConnection) return;
-    return remoteDataSource.updateBoard(boardId, map);
+    if (networkInfo.hasConnection && boardId != null) {
+      return remoteDataSource.updateBoard(boardId!, map);
+    }
   }
 
-  @override
-  Future<void> clear(String boardId) async {
+  Future<void> clear() async {
     await localDataSource.clear();
-    if (!networkInfo.hasConnection) return;
-    return remoteDataSource.clearBoard(boardId);
+    if (networkInfo.hasConnection && boardId != null) {
+      return remoteDataSource.clearBoard(boardId!);
+    }
   }
 
-  @override
-  Future<List<BoardArtifact>> fetchBoard(String boardId) async {
+  Future<List<BoardArtifact>> fetchBoard() async {
     final board = await localDataSource.get();
-    if (networkInfo.hasConnection) {
-      await remoteDataSource.setBoard(boardId, board);
+    if (networkInfo.hasConnection && boardId != null) {
+      remoteDataSource.setBoard(boardId!, board).ignore();
     }
     return board.map(BoardArtifactMapper.fromMap).toList();
   }
 
-  @override
-  Future<void> undo(String boardId, String artifactId) async {
+  Future<void> delete(String artifactId) async {
     await localDataSource.undo(artifactId);
-    if (!networkInfo.hasConnection) return;
-    await remoteDataSource.deleteFromBoard(boardId, artifactId);
+    if (networkInfo.hasConnection && boardId != null) {
+      await remoteDataSource.deleteFromBoard(boardId!, artifactId);
+    }
   }
 }

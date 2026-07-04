@@ -1,8 +1,10 @@
 part of 'board_bloc.dart';
 
 final class BoardConstants {
+  static const maxArtifacts = 128;
+
   static const minWidth = 1.0;
-  static const maxWidth = 64.0;
+  static const maxWidth = 16.0;
 
   static const colors = [
     Color(0xFF000000),
