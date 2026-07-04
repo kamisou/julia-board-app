@@ -3,24 +3,23 @@ import 'package:hive_ce/hive_ce.dart';
 final class BoardLocalDataSource {
   const BoardLocalDataSource();
 
-  Future<Box<Map>> get _box async {
-    if (Hive.isBoxOpen('board')) {
-      return Hive.box('board');
-    }
-    return Hive.openBox('board');
+  static const _boxName = 'board';
+  Future<Box<Map>> get _box async =>
+      Hive.isBoxOpen(_boxName) ? Hive.box(_boxName) : Hive.openBox(_boxName);
+
+  Future<void> dispose() {
+    return _box.then((e) => e.close());
   }
 
-  Future<List<Map<String, Object?>>> get() {
-    return _box.then(
-      (e) => e.values.map((e) => e.cast<String, Object?>()).toList(),
-    );
+  Future<Iterable<Map<String, Object?>>> get() {
+    return _box.then((e) => e.values.map((e) => e.cast<String, Object?>()));
   }
 
   Future<void> add(String id, Map<String, Object?> data) {
     return _box.then((e) => e.put(id, data));
   }
 
-  Future<void> undo(String id) {
+  Future<void> remove(String id) {
     return _box.then((e) => e.delete(id));
   }
 

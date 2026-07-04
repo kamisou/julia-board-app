@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:julia_board/board/presentation/data/board_artifact.dart';
-import 'package:julia_board/board/presentation/data/board_stroke.dart';
 
 final class BoardArtifactMapper {
   static BoardArtifact fromMap(Map<String, Object?> map) {

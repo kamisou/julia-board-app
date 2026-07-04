@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:julia_board/board/presentation/data/board_artifact.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
-import 'package:julia_board/board/presentation/data/board_stroke.dart';
 import 'package:uuid/uuid.dart';
 
 class BoardWidget extends StatefulWidget {

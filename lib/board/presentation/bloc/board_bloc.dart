@@ -27,14 +27,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     BoardStarted event,
     Emitter<BoardState> emit,
   ) async {
-    try {
-      final id = await boardRepository.getBoardId();
-      emit(state.copyWith(id: () => id, status: BoardStatus.success));
-    } catch (_) {
-      emit(state.copyWith(status: BoardStatus.error));
-    }
-
-    final artifacts = await boardRepository.fetchBoard();
+    final artifacts = await boardRepository.restoreBoard();
     emit(state.copyWith(artifacts: artifacts));
   }
 
@@ -63,7 +56,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         undoBuffer: const [],
       ),
     );
-    boardRepository.add(event.artifact).ignore();
+    return boardRepository.addArtifact(event.artifact);
   }
 
   void _onUndoTapped(
@@ -71,7 +64,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     if (state.artifacts.isEmpty) return;
-    boardRepository.delete(state.artifacts.last.id).ignore();
+    await boardRepository.removeArtifact(state.artifacts.last);
     emit(
       state.copyWith(
         artifacts: [...state.artifacts.take(state.artifacts.length - 1)],
@@ -85,7 +78,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     if (state.undoBuffer.isEmpty) return;
-    boardRepository.add(state.undoBuffer.last).ignore();
+    await boardRepository.addArtifact(state.undoBuffer.last);
     emit(
       state.copyWith(
         artifacts: [...state.artifacts, state.undoBuffer.last],
@@ -100,6 +93,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     if (state.artifacts.isEmpty) return;
     emit(state.copyWith(artifacts: const [], undoBuffer: const []));
-    boardRepository.clear().ignore();
+    await boardRepository.clearBoard();
   }
 }

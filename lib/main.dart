@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:julia_board/board/presentation/screen/board_screen.dart';
-import 'package:julia_board/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await initializeDependencies();
   await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
   runApp(const MainApp());
 }

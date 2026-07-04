@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:julia_board/board/data/data_source/board_local_data_source.dart';
-import 'package:julia_board/board/data/data_source/board_remote_data_source.dart';
 import 'package:julia_board/board/data/repository/board_repository.dart';
 import 'package:julia_board/board/presentation/bloc/board_bloc.dart';
-import 'package:julia_board/board/presentation/widgets/board_connection_key.dart';
 import 'package:julia_board/board/presentation/widgets/board_controls.dart';
 import 'package:julia_board/board/presentation/widgets/board_palette.dart';
 import 'package:julia_board/board/presentation/widgets/board_widget.dart';
 import 'package:julia_board/board/presentation/widgets/board_width_slider.dart';
-import 'package:julia_board/core/device/device_id.dart';
-import 'package:julia_board/core/network/api_client.dart';
-import 'package:julia_board/core/network/network_info.dart';
-import 'package:julia_board/get_it.dart';
 
 class BoardScreen extends StatelessWidget {
   const BoardScreen({super.key});
@@ -24,14 +18,10 @@ class BoardScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Center(
           child: RepositoryProvider<BoardRepository>(
-            create: (context) => BoardRepository(
-              deviceInfo: get<DeviceInfo>(),
-              networkInfo: get<NetworkInfo>(),
-              localDataSource: const BoardLocalDataSource(),
-              remoteDataSource: BoardRemoteDataSource(
-                apiClient: get<ApiClient>(),
-              ),
+            create: (context) => const BoardRepository(
+              localDataSource: BoardLocalDataSource(),
             ),
+            dispose: (repo) => repo.dispose(),
             child: BlocProvider<BoardBloc>(
               create: (context) => BoardBloc(
                 boardRepository: context.read<BoardRepository>(),
@@ -49,7 +39,6 @@ class BoardScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       spacing: 32,
       children: [
-        BoardConnectionKey(),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: BoardWidget(),
