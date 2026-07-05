@@ -1,35 +1,39 @@
 import 'dart:async';
 
-import 'package:julia_board/board/data/data_source/board_local_data_source.dart';
+import 'package:julia_board/board/data/data_source/local_board_data_source.dart';
 import 'package:julia_board/board/data/mapper/board_artifact_mapper.dart';
 import 'package:julia_board/board/presentation/data/board_artifact.dart';
 
 final class BoardRepository {
-  const BoardRepository({
-    required this.localDataSource,
+  BoardRepository({
+    required this.local,
   });
 
-  final BoardLocalDataSource localDataSource;
+  final LocalBoardDataSource local;
 
-  Future<void> dispose() {
-    return localDataSource.dispose();
+  Future<void> open() async {
+    return local.open();
+  }
+
+  Future<void> close() async {
+    await local.close();
   }
 
   Future<void> addArtifact(BoardArtifact artifact) async {
     final data = BoardArtifactMapper.toMap(artifact);
-    await localDataSource.add(artifact.id, data);
+    return local.add(artifact.id, data);
   }
 
   Future<void> removeArtifact(BoardArtifact artifact) async {
-    await localDataSource.remove(artifact.id);
+    return local.remove(artifact.id);
   }
 
   Future<void> clearBoard() async {
-    await localDataSource.clear();
+    return local.clear();
   }
 
-  Future<List<BoardArtifact>> restoreBoard() async {
-    final values = await localDataSource.get();
-    return values.map(BoardArtifactMapper.fromMap).toList();
+  Future<List<BoardArtifact>> getBoard() async {
+    final data = local.get();
+    return data.map(BoardArtifactMapper.fromMap).toList();
   }
 }

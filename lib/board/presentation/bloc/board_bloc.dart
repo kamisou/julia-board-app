@@ -27,7 +27,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     BoardStarted event,
     Emitter<BoardState> emit,
   ) async {
-    final artifacts = await boardRepository.restoreBoard();
+    await boardRepository.open();
+    final artifacts = await boardRepository.getBoard();
     emit(state.copyWith(artifacts: artifacts));
   }
 
@@ -59,40 +60,48 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     return boardRepository.addArtifact(event.artifact);
   }
 
-  void _onUndoTapped(
+  Future<void> _onUndoTapped(
     UndoTapped event,
     Emitter<BoardState> emit,
   ) async {
     if (state.artifacts.isEmpty) return;
-    await boardRepository.removeArtifact(state.artifacts.last);
+    final artifact = state.artifacts.last;
     emit(
       state.copyWith(
         artifacts: [...state.artifacts.take(state.artifacts.length - 1)],
-        undoBuffer: [...state.undoBuffer, state.artifacts.last],
+        undoBuffer: [...state.undoBuffer, artifact],
       ),
     );
+    return boardRepository.removeArtifact(artifact);
   }
 
-  void _onRedoTapped(
+  Future<void> _onRedoTapped(
     RedoTapped event,
     Emitter<BoardState> emit,
   ) async {
     if (state.undoBuffer.isEmpty) return;
-    await boardRepository.addArtifact(state.undoBuffer.last);
+    final artifact = state.undoBuffer.last;
     emit(
       state.copyWith(
-        artifacts: [...state.artifacts, state.undoBuffer.last],
+        artifacts: [...state.artifacts, artifact],
         undoBuffer: [...state.undoBuffer.take(state.undoBuffer.length - 1)],
       ),
     );
+    return boardRepository.addArtifact(artifact);
   }
 
-  void _onBoardCleared(
+  Future<void> _onBoardCleared(
     BoardCleared event,
     Emitter<BoardState> emit,
   ) async {
     if (state.artifacts.isEmpty) return;
     emit(state.copyWith(artifacts: const [], undoBuffer: const []));
-    await boardRepository.clearBoard();
+    return boardRepository.clearBoard();
+  }
+
+  @override
+  Future<void> close() async {
+    await boardRepository.close();
+    return super.close();
   }
 }
