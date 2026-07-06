@@ -11,7 +11,8 @@ class BoardControls extends StatelessWidget {
     return BlocBuilder<BoardBloc, BoardState>(
       buildWhen: (previous, current) =>
           previous.artifacts.length != current.artifacts.length ||
-          previous.undoBuffer.length != current.undoBuffer.length,
+          previous.undoBuffer.length != current.undoBuffer.length ||
+          previous.status != current.status,
       builder: (context, state) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -47,6 +48,26 @@ class BoardControls extends StatelessWidget {
             icon: const Icon(
               Icons.delete_rounded,
               size: 28,
+            ),
+          ),
+          const VerticalDivider(
+            indent: 8,
+            endIndent: 8,
+            width: 64,
+          ),
+          const SizedBox(width: 4),
+          TextButton.icon(
+            onPressed: state.status != BoardStatus.loading
+                ? () => context.read<BoardBloc>().add(const BoardSent())
+                : null,
+            icon: const Icon(Icons.send_rounded),
+            label: const Text('Enviar'),
+            style: TextButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              textStyle: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

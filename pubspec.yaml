@@ -7,10 +7,14 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+  dio: ^5.10.0
   equatable: ^2.0.8
+  firebase_core: ^4.11.0
+  firebase_messaging: ^16.4.1
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
+  get_it: ^9.2.1
   google_fonts: ^8.1.0
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4

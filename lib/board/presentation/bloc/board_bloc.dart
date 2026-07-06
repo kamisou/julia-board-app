@@ -19,6 +19,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<UndoTapped>(_onUndoTapped);
     on<RedoTapped>(_onRedoTapped);
     on<BoardCleared>(_onBoardCleared);
+    on<BoardSent>(_onBoardSent);
   }
 
   final BoardRepository boardRepository;
@@ -97,6 +98,19 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     if (state.artifacts.isEmpty) return;
     emit(state.copyWith(artifacts: const [], undoBuffer: const []));
     return boardRepository.clearBoard();
+  }
+
+  Future<void> _onBoardSent(
+    BoardSent event,
+    Emitter<BoardState> emit,
+  ) async {
+    emit(state.copyWith(status: BoardStatus.loading));
+    try {
+      await boardRepository.sendBoard(state.artifacts);
+      emit(state.copyWith(status: BoardStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: BoardStatus.error));
+    }
   }
 
   @override

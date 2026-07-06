@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "573407066181",
+    "firebase_url": "https://julia-board-default-rtdb.firebaseio.com",
+    "project_id": "julia-board",
+    "storage_bucket": "julia-board.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573407066181:android:38c18c4fcb6ccb7ff40b2c",
+        "android_client_info": {
+          "package_name": "br.com.kamis.board"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573407066181-dnm0n3j81pemfk6ccf2th47c3mkc469a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZQWFsVIxxRQJu1siVdcERcoUy5Mpnd_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573407066181-dnm0n3j81pemfk6ccf2th47c3mkc469a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573407066181:android:03bfba95d9218332f40b2c",
+        "android_client_info": {
+          "package_name": "br.com.kamis.julia_board"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573407066181-dnm0n3j81pemfk6ccf2th47c3mkc469a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZQWFsVIxxRQJu1siVdcERcoUy5Mpnd_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573407066181-dnm0n3j81pemfk6ccf2th47c3mkc469a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

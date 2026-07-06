@@ -7,7 +7,7 @@ final class BoardArtifactMapper {
     return switch (map['type']) {
       'stroke' => BoardStroke(
         id: map['id'] as String,
-        color: Color(map['color'] as int),
+        color: Color(int.parse(map['color'] as String, radix: 16)),
         width: (map['width'] as num).toDouble(),
         points: (map['points'] as List)
             .map(
@@ -30,7 +30,7 @@ final class BoardArtifactMapper {
       :final points,
     )) ...{
       'type': 'stroke',
-      'color': color.toARGB32(),
+      'color': color.toARGB32().toRadixString(16),
       'width': width,
       'points': points.map((e) => {'x': e.dx, 'y': e.dy}).toList(),
     },

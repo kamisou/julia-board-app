@@ -1,14 +1,17 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:julia_board/board/data/data_source/local_board_data_source.dart';
 import 'package:julia_board/board/data/mapper/board_artifact_mapper.dart';
 import 'package:julia_board/board/presentation/data/board_artifact.dart';
 
 final class BoardRepository {
-  BoardRepository({
+  const BoardRepository({
+    required this.dio,
     required this.local,
   });
 
+  final Dio dio;
   final LocalBoardDataSource local;
 
   Future<void> open() async {
@@ -35,5 +38,13 @@ final class BoardRepository {
   Future<List<BoardArtifact>> getBoard() async {
     final data = local.get();
     return data.map(BoardArtifactMapper.fromMap).toList();
+  }
+
+  Future<void> sendBoard(List<BoardArtifact> artifacts) {
+    const id = String.fromEnvironment('APP_USER');
+    return dio.put(
+      '/board/$id',
+      data: {'artifacts': artifacts.map(BoardArtifactMapper.toMap).toList()},
+    );
   }
 }

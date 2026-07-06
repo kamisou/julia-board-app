@@ -55,3 +55,7 @@ final class RedoTapped extends BoardEvent {
 final class BoardCleared extends BoardEvent {
   const BoardCleared();
 }
+
+final class BoardSent extends BoardEvent {
+  const BoardSent();
+}
