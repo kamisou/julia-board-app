@@ -10,7 +10,7 @@ import 'package:uuid/uuid.dart';
 class BoardWidget extends StatefulWidget {
   const BoardWidget({
     super.key,
-    this.aspectRatio = 1.0,
+    this.aspectRatio = 585.0 / 678.0, // android widget aspect ratio
   });
 
   final double aspectRatio;
