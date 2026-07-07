@@ -30,19 +30,20 @@ class _BoardWidgetState extends State<BoardWidget> {
       child: BlocBuilder<BoardBloc, BoardState>(
         builder: (context, state) => LayoutBuilder(
           builder: (context, constraints) {
-            final max = constraints.maxWidth;
+            final maxW = constraints.maxWidth;
+            final maxH = constraints.maxHeight;
             return GestureDetector(
               onPanStart: (details) {
                 final pos = details.localPosition.scale(
-                  1.0 / max,
-                  1.0 / max,
+                  1.0 / maxW,
+                  1.0 / maxH,
                 );
                 _startComposing(pos, state);
               },
               onPanUpdate: (details) {
                 final pos = details.localPosition.scale(
-                  1.0 / max,
-                  1.0 / max,
+                  1.0 / maxW,
+                  1.0 / maxH,
                 );
                 final oob =
                     pos.dx < 0 || pos.dy < 0 || pos.dx >= 1.0 || pos.dy >= 1.0;
@@ -55,8 +56,8 @@ class _BoardWidgetState extends State<BoardWidget> {
               },
               onPanEnd: (details) {
                 final pos = details.localPosition.scale(
-                  1.0 / max,
-                  1.0 / max,
+                  1.0 / maxW,
+                  1.0 / maxH,
                 );
                 if (_composing != null) _composing!.points.add(pos);
                 _emitStroke(context);
@@ -114,7 +115,7 @@ class _BoardWidgetState extends State<BoardWidget> {
     _composing = null;
   }
 
-  List<Offset> _douglasPecker(List<Offset> points, [double epsilon = 0.0035]) {
+  List<Offset> _douglasPecker(List<Offset> points, [double epsilon = 0.0015]) {
     if (points.length < 3) return points;
 
     var maxDistance = 0.0;
@@ -163,7 +164,7 @@ class _BoardPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.scale(size.width);
+    canvas.scale(size.width, size.height);
     for (final artifact in [...artifacts, ?composing]) {
       switch (artifact) {
         case BoardStroke(:final color, :final width, :final points):
