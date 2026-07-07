@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:julia_board/board/presentation/screen/board_screen.dart';
+import 'package:julia_board/core/bloc/error_reporter_bloc_observer.dart';
 import 'package:julia_board/core/messaging/messaging_service.dart';
+import 'package:julia_board/core/monitoring/crashalytics_error_reporter.dart';
 import 'package:julia_board/get_it.dart';
 import 'package:julia_board/notification/data/repository/notification_repository.dart';
 
@@ -15,6 +19,19 @@ void main() async {
   await Hive.initFlutter();
   await initializeDependencies();
   await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
+  if (!kDebugMode) {
+    FlutterError.onError = (errorDetails) {
+      FlutterError.presentError(errorDetails);
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+    Bloc.observer = const ErrorReporterBlocObserver(
+      reporter: CrashalyticsErrorReporter(),
+    );
+  }
   runApp(const MainApp());
 }
 

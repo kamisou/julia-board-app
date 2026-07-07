@@ -108,7 +108,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     try {
       await boardRepository.sendBoard(state.artifacts);
       emit(state.copyWith(status: BoardStatus.success));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      addError(e, stackTrace);
       emit(state.copyWith(status: BoardStatus.error));
     }
   }
