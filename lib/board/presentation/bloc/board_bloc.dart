@@ -51,7 +51,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     ArtifactAdded event,
     Emitter<BoardState> emit,
   ) async {
-    if (state.artifacts.length > BoardConstants.maxArtifacts) return;
     emit(
       state.copyWith(
         artifacts: [...state.artifacts, event.artifact],

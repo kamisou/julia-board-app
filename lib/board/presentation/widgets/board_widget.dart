@@ -185,6 +185,6 @@ class _BoardPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _BoardPainter oldDelegate) {
     return composing != oldDelegate.composing ||
-        artifacts.length == oldDelegate.artifacts.length;
+        artifacts.length != oldDelegate.artifacts.length;
   }
 }
