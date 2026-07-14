@@ -23,7 +23,9 @@ void main() async {
   await initializeDependencies();
   await GoogleFonts.pendingFonts([GoogleFonts.outfitTextTheme()]);
   FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
-  FirebaseMessaging.onMessage.listen((_) => HomeWidgetService.refreshFromRemote());
+  FirebaseMessaging.onMessage.listen(
+    (_) => HomeWidgetService.refreshFromRemote(),
+  );
   if (!kDebugMode) {
     FlutterError.onError = (errorDetails) {
       FlutterError.presentError(errorDetails);

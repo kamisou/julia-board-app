@@ -41,9 +41,8 @@ final class BoardRepository {
   }
 
   Future<void> sendBoard(List<BoardArtifact> artifacts) {
-    const id = String.fromEnvironment('APP_USER');
     return dio.put(
-      '/board/$id',
+      '/board',
       data: {'artifacts': artifacts.map(BoardArtifactMapper.toMap).toList()},
     );
   }
