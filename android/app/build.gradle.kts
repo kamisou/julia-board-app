@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -9,6 +11,17 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Shared config lives in the Flutter `.env` (consumed by Dart via
+// `--dart-define-from-file`). The native home widget fetches the board on its
+// own, so mirror those values into BuildConfig for the Glance widget to read.
+val flutterEnv = Properties().apply {
+    val envFile = rootProject.file("../.env")
+    if (envFile.exists()) envFile.inputStream().use { load(it) }
+}
+
+fun env(key: String): String =
+    (flutterEnv.getProperty(key) ?: "").trim().trim('"')
 
 android {
     namespace = "br.com.kamis.julia_board"
@@ -29,6 +42,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        buildConfigField("String", "API_BASE_URL", "\"${env("API_BASE_URL")}\"")
+        buildConfigField("String", "APP_USER", "\"${env("APP_USER")}\"")
     }
 
     buildTypes {
@@ -41,6 +57,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

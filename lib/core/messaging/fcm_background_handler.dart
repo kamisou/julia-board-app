@@ -5,5 +5,5 @@ import 'package:julia_board/widget/home_widget_service.dart';
 @pragma('vm:entry-point')
 Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  await HomeWidgetService.refreshFromRemote();
+  await HomeWidgetService.refresh();
 }
